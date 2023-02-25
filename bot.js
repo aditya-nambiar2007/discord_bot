@@ -54,6 +54,8 @@ client.on("message", msg => {
       client.on('message', message => {
         if (/\$start\s*/.test(message.content)) { message.reply('Stop The StopWatch First') }
         if (/\$stop\s*/.test(message.content)) { message.reply('Stopped The StopWatch'); clearInterval(is) }
+        if (/\$lap\s*/.test(message.content)) { message.reply(mes.content) }
+       
       })
     }, 1000);
   }
