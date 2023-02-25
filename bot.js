@@ -1,4 +1,4 @@
-
+// "discord.js" required
 let time = {
   time_remains: function (time_input) {
     let timeInMS = Date.parse(time_input) - Date.now()
