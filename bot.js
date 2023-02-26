@@ -61,4 +61,4 @@ client.on("message", msg => {
   }
 })
 
-client.login('h'/*process.env.TOKEN*/)
+client.login('MTA3OTQ2Mzk0ODQ1NTI2MDIzMA.GTh_iQ.jP6JCLOTTRCJ8y58gv2fI8G5XpjQf0oTQQ50Is')
