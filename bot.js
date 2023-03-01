@@ -1,5 +1,5 @@
-// "discord.js" required
 let time = {
+  
   time_remains: function (time_input) {
     let timeInMS = Date.parse(time_input) - Date.now()
     if (timeInMS / 1000 >= 1) {
@@ -16,6 +16,7 @@ let time = {
     }
     else { return "Opps, Seems Like The Date's Already Elapsed" }
   },
+
   time_until: function (time_input) {
     let timeInMS = Date.now() - Date.parse(time_input)
     if (timeInMS / 1000 >= 1) {
@@ -58,7 +59,11 @@ client.on("message", msg => {
        
       })
     }, 1000);
-  }
+    }
+    if(msg.content=='$dev'){
+      msg.reply(`Developer: Aditya Nambiar
+      Hosted By: YT .`)
+    }
 })
 
 client.login('MTA3OTQ2Mzk0ODQ1NTI2MDIzMA.GTh_iQ.jP6JCLOTTRCJ8y58gv2fI8G5XpjQf0oTQQ50Is')
