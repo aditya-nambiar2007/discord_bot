@@ -37,31 +37,31 @@ let time = {
   time: () => { return new Date() }
 }
 
-const Discord = require("discord.js")
+const Discord = require("discord.js.old")
 const client = new Discord.Client()
 
 client.on("message", msg => {
-  if (/\$time\s*/.test(msg.content)) { msg.reply("The Time Is " + time.time()); }
-  if (/\$time_until\s* .+/.test(msg.content)) { msg.reply(time.time_until(msg.content.replace(/\$time_until\s*/, ''))); }
-  if (/\$time_remains\s* .+/.test(msg.content)) { msg.reply(time.time_remains(msg.content.replace(/\$time_remains\s*/, ''))); }
+  if (/\$_time\s*/.test(msg.content)) { msg.channel.send("The Time Is " + time.time()); }
+  if (/\$time_until\s* .+/.test(msg.content)) { msg.channel.send(time.time_until(msg.content.replace(/\$time_until\s*/, ''))); }
+  if (/\$time_remains\s* .+/.test(msg.content)) { msg.channel.send(time.time_remains(msg.content.replace(/\$time_remains\s*/, ''))); }
   if (/\$start\s*/.test(msg.content)) {
     let s = 0
     let mes = msg.channel.send("0 : 0 : 0")
     let is = setInterval(() => {
       let minutes = s / 60;
       let hours = minutes / 60;
-      mes.edit(`${Math.floor(hours)} : ${Math.floor(minutes) % 60} : ${Math.floor(s) % 60}`)
+      mes.then(s=>s.edit(`${Math.floor(hours)} : ${Math.floor(minutes) % 60} : ${Math.floor(s) % 60}`))
       s++
       client.on('message', message => {
-        if (/\$start\s*/.test(message.content)) { message.reply('Stop The StopWatch First') }
-        if (/\$stop\s*/.test(message.content)) { message.reply('Stopped The StopWatch'); clearInterval(is) }
-        if (/\$lap\s*/.test(message.content)) { message.reply(mes.content) }
+        if (/\$start\s*/.test(message.content)) { message.channel.send('Stop The StopWatch First') }
+        if (/\$stop\s*/.test(message.content)) { message.channel.send('Stopped The StopWatch'); clearInterval(is) }
+        if (/\$lap\s*/.test(message.content)) { message.channel.send(mes.content) }
        
       })
     }, 1000);
     }
     if(msg.content=='$dev'){
-      msg.reply(`Developer: Aditya Nambiar
+      msg.channel.send(`Developer: Aditya Nambiar
       Hosted By: YT .`)
     }
 })
