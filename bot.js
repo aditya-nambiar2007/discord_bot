@@ -61,7 +61,8 @@ client.on("message", msg => {
       })
     }
     if(msg.content=='$dev'){
-      msg.channel.send(`Developer: Aditya Nambiar
+      msg.channel.send(
+     `Developer: Aditya Nambiar
       Hosted By: YT .`)
     }
 })
