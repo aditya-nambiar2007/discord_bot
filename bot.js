@@ -48,17 +48,17 @@ client.on("message", msg => {
     let s = 0
     let mes = msg.channel.send("0 : 0 : 0")
     let is = setInterval(() => {
-      let minutes = s / 60;
-      let hours = minutes / 60;
-      mes.then(s=>s.edit(`${Math.floor(hours)} : ${Math.floor(minutes) % 60} : ${Math.floor(s) % 60}`))
-      s++
+              let minutes = s / 60;
+              let hours = minutes / 60;
+              mes.then(s=>s.edit(`${Math.floor(hours)} : ${Math.floor(minutes) % 60} : ${Math.floor(s) % 60}`))
+              s++
+              }, 1000);
       client.on('message', message => {
         if (/\$start\s*/.test(message.content)) { message.channel.send('Stop The StopWatch First') }
         if (/\$stop\s*/.test(message.content)) { message.channel.send('Stopped The StopWatch'); clearInterval(is) }
         if (/\$lap\s*/.test(message.content)) { message.channel.send(mes.content) }
        
       })
-    }, 1000);
     }
     if(msg.content=='$dev'){
       msg.channel.send(`Developer: Aditya Nambiar
