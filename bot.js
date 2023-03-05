@@ -4,7 +4,7 @@ const client = new Discord.Client()
 client.on("message", msg => {
   if (/\$time\s*/.test(msg.content)) { msg.channel.send("The Time Is " + new Date()); }
   if (/\$_fact\s+[0-9]+/.test(msg.content)) {
-    let ret=facts
+    let ret=facts.sort((a,b)=>{return 0.5-Math.random()})
     let num =msg.content.replace(/\$_fact\s+/,"")
     num = parseInt(num)
     if (num<1) {num=1}
@@ -13,8 +13,13 @@ client.on("message", msg => {
     ret.sort((a,b)=>{return Math.random()})
 
     for (let i = 0; i < num; i++) {
-      let react=msg.channel.send(
-                      `Fact ${i+1} : \n-> ${ret[i]}`)
+      const embed=new Discord.RichEmbed()
+                  .setColor(0x999900)
+                  .setTitle(`Fact ${i+1}:`)
+                  .setDescription(`${ret[i]}`)
+                  .setFooter('Did You Like The Fact');
+      //`Fact ${i+1} : \n-> ${ret[i]}`
+      let react=msg.channel.send( { content:msg.author , embed:embed } )
       react.then(m=>m.react('👍'))  
       react.then(m=>m.react('👎'))  
       
@@ -27,7 +32,7 @@ client.on("message", msg => {
     }    
     if(/\$info\s*/.test(msg.content)){
       msg.channel.send(
-      `We Have **${JSON.parse(facts).length}** Facts.`)
+      `We Have **${facts .length}** Facts.`)
     }
     if (/\$help\s*/.test(msg.content)) { 
       msg.reply(
