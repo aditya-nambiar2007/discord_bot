@@ -17,7 +17,7 @@ client.on("message", msg => {
     for (let i = 0; i < num; i++) {
       await sleep(1000)
       const embed=new Discord.RichEmbed()
-                  .setColor(0x999900)
+                  .setColor("Random")
                   .setTitle(`Fact ${i+1}:`)
                   .setDescription(`${ret[i]}`)
                   .setFooter('Did You Like The Fact');
