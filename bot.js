@@ -1,3 +1,5 @@
+let sleep = ms => {  return new Promise(resolve => setTimeout(resolve, ms))  };  
+
 const Discord = require("discord.js.old")
 const client = new Discord.Client()
 
@@ -13,6 +15,7 @@ client.on("message", msg => {
     ret.sort((a,b)=>{return Math.random()})
 
     for (let i = 0; i < num; i++) {
+      await sleep(1000)
       const embed=new Discord.RichEmbed()
                   .setColor(0x999900)
                   .setTitle(`Fact ${i+1}:`)
