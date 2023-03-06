@@ -5,9 +5,9 @@ const client = new Discord.Client()
 
 client.on("message", msg => {
   if (/\$time\s*/.test(msg.content)) { msg.channel.send("The Time Is " + new Date()); }
-  if (/\$_fact\s+[0-9]+/.test(msg.content)) {
+  if (/\$_facts\s+[0-9]+/.test(msg.content)) {
     let ret=facts.sort((a,b)=>{return 0.5-Math.random()})
-    let num =msg.content.replace(/\$_fact\s+/,"")
+    let num =msg.content.replace(/\$_facts\s+/,"")
     num = parseInt(num)
     if (num<1) {num=1}
     if (num>9) {num=10}
@@ -34,13 +34,11 @@ client.on("message", msg => {
        Hosted By: YT .`)
     }    
     if(/\$info\s*/.test(msg.content)){
-      msg.channel.send(
-      `We Have **${facts .length}** Facts.`)
+      msg.channel.send(`We Have **${facts .length}** Facts.`)
     }
     if (/\$help\s*/.test(msg.content)) { 
       msg.reply(
-        `Type $_fact *n* to get *n* random facts.
-        Type $info For More Information.`
+        `Type $_facts *n* to get *n* random facts. \n Type $info For More Information.`
         ); }
 
 })
