@@ -1,4 +1,4 @@
-let sleep = ms => {  return new Promise(resolve => setTimeout(resolve, ms))  };  
+let sleep = ms => {  return new Promise( resolve => setTimeout(resolve, ms))  };  
 
 const Discord = require("discord.js.old")
 const client = new Discord.Client()
@@ -13,11 +13,12 @@ client.on("message", msg => {
     if (num>9) {num=10}
 
     ret.sort((a,b)=>{return Math.random()})
+    async function f(){
 
     for (let i = 0; i < num; i++) {
-      await sleep(1000)
+      await  sleep(1000)
       const embed=new Discord.RichEmbed()
-                  .setColor("Random")
+                  .setColor([Math.random()*155+100,Math.random()*155+100,Math.random()*155+100])
                   .setTitle(`Fact ${i+1}:`)
                   .setDescription(`${ret[i]}`)
                   .setFooter('Did You Like The Fact');
@@ -25,8 +26,9 @@ client.on("message", msg => {
       let react=msg.channel.send( { content:msg.author , embed:embed } )
       react.then(m=>m.react('👍'))  
       react.then(m=>m.react('👎'))  
-      
       }
+      }
+      f()
     }
     if(msg.content=='$dev'){
       msg.channel.send(
