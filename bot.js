@@ -1,12 +1,6 @@
 const random = {
-  string: (len, a) => {
-    let str = ""
-    const letter = a || "qwertyuiopasdfghjklzxcvbnmQWERTYUIOPASDFGHJKLZXCVBNM1234567890!@$#%^&*(){}[];:'\|?/><.,+=-_*"
-    for (let i = 0; i < len; i++) { str += letter.charAt(Math.floor(Math.random() * letter.length)) }
-    return str
-  },
   int: function (a, b) { return Math.floor(Math.random() * (b - a + 1)) + a },
-  float: function (a, b) { return (Math.random() * (b - a + 1)) + a },
+  float: function (a, b) { return (Math.random() * (b - a + 1)) + a -1  },
 }
 
 
@@ -17,7 +11,7 @@ const client = new Discord.Client()
 
 client.on("message", msg => {
   if (!msg.author.bot) {
-    if (/\$_facts\s+[0-9]+/.test(msg.content)) {
+    if (/\$_facts\s+[0-9]+/.test(msg.content) ) {
       let ret = facts.sort((a, b) => { return 0.5 - Math.random() })
       let num = msg.content.replace(/\$_facts\s+/, "")
       num = parseInt(num)
@@ -46,14 +40,14 @@ client.on("message", msg => {
       msg.channel.send(
         ` Developer: Aditya Nambiar  \n Hosted By: YT .`)
     }
-    if (/\$info\s*/.test(msg.content)) {
+    if (msg.content.substr(0, "$info".length) == "$info") {
       msg.channel.send(`We Have **${facts.length - 1}+** Facts.`)
     }
-    if (/\$help\s*/.test(msg.content)) {
+    if (msg.content.substr(0, "$f_help".length) == "$f_help") {
       let embed = new Discord.RichEmbed()
         .setColor([Math.random() * 155 + 100, Math.random() * 155 + 100, Math.random() * 155 + 100])
         .setTitle(`Help`)
-        .setDescription(`\n > Type $_facts *n* to get *n* random facts (*n* must be between *1* and *10*). \n\n > Type $info For More Information.`)
+        .setDescription(`\n > Type $_facts *n* to get *n* random facts (*n* must be between *1* and *10*). \n\n > Type $random_int *a* , *b* For Obtaining A random **INTEGER** between *a* and *b*.\n\n > Type $random_decimal *a* , *b* For Obtaining A random **DECIMAL NO.** between *a* and *b*.\n\n > Type $info For More Information.`)
 
       msg.channel.send({ content: msg.author, embed: embed })
     }
@@ -62,7 +56,7 @@ client.on("message", msg => {
       let data = msg.content.replace(/\$random_int\s+/, "")
       data = '[' + data + ']'
       data=JSON.parse(data)
-      msg.reply(`\n The Random Number Is : **${random.int(data[0], data[1])}**`)
+      msg.reply(`\n The Random Number Is : **${random.int(data[0], data[1])||'Uff, Check Your Input!'}**`)
     }
 
    if (msg.content.substr(0, "$random_decimal".length) == "$random_decimal") {
