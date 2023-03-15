@@ -1,8 +1,22 @@
 const random = {
   int: function (a, b) { return Math.floor(Math.random() * (b - a + 1)) + a },
-  float: function (a, b) { return (Math.random() * (b - a + 1)) + a -1  },
+  float: function (a, b) { return (Math.random() * (b - a + 1)) + a - 1 },
 }
 
+function json(data,method) {
+  let back
+  try { 
+    data=JSON.parse(data)
+    if (data.length == 2) { 
+    back = `\n The Random Number Is : **${random[method](data[0], data[1])}**` } 
+    else {    
+      back = ' Check Your Input!'  }
+  }
+  catch (error) {
+    back = ' Check Your Input!'
+  }
+  return back
+}
 
 let sleep = ms => { return new Promise(resolve => setTimeout(resolve, ms)) };
 
@@ -11,7 +25,7 @@ const client = new Discord.Client()
 
 client.on("message", msg => {
   if (!msg.author.bot) {
-    if (/\$_facts\s+[0-9]+/.test(msg.content) ) {
+    if (/\$_facts\s+[0-9]+/.test(msg.content)) {
       let ret = facts.sort((a, b) => { return 0.5 - Math.random() })
       let num = msg.content.replace(/\$_facts\s+/, "")
       num = parseInt(num)
@@ -55,15 +69,13 @@ client.on("message", msg => {
     if (msg.content.substr(0, "$random_int".length) == "$random_int") {
       let data = msg.content.replace(/\$random_int\s+/, "")
       data = '[' + data + ']'
-      data=JSON.parse(data)
-      msg.reply(`\n The Random Number Is : **${random.int(data[0], data[1])||'Uff, Check Your Input!'}**`)
+      msg.reply(json(data,'int'))
     }
 
-   if (msg.content.substr(0, "$random_decimal".length) == "$random_decimal") {
+    if (msg.content.substr(0, "$random_decimal".length) == "$random_decimal") {
       let data = msg.content.replace(/\$random_decimal\s+/, "")
       data = '[' + data + ']'
-      data=JSON.parse(data)
-      msg.reply(`\n The Random Number Is : **${random.float(data[0], data[1])}**`)
+      msg.reply(json(data,'float'))
     }
   }
 })
@@ -571,4 +583,4 @@ let facts = [
   "The stick is the world's first toy.",
   "The first baby stroller was pulled by animals.",
   "Ancient Egyptians used dead mice for toothaches.",
-  "Africa spans across the Northern , Eastern , Western & Southern Hemispheres"  ]
+  "Africa spans across the Northern , Eastern , Western & Southern Hemispheres"]
