@@ -81,10 +81,7 @@ client.on("message", msg => {
       if (Math.random()>0.5) {msg.reply("\n > Coin Showed **HEADS**")} 
       else {msg.reply("\n > Coin Showed **TAILS**")}
     }
-    if (msg.content.substr(0, "$coin_toss".length) == "$coin_toss") {
-      if (Math.random()>0.5) {msg.reply("\n > Coin Showed **HEADS**")} 
-      else {msg.reply("\n > Coin Showed **TAILS**")}
-    }   
+     
     if (msg.content.substr(0, "$dice_roll".length) == "$dice_roll") {
       msg.reply(`\n > The Number Is \`${random.int(1, 6)}\``)
     }
