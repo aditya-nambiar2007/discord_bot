@@ -30,7 +30,7 @@ client.on("message", msg => {
       let num = msg.content.replace(/\$_facts\s+/, "")
       num = parseInt(num)
       if (num < 1) { num = 1 }
-      if (num > 9) { num = 10 }
+      if (num > facts.length/10) { num = Math.floor( facts.length/10 )*10 }
 
       ret.sort((a, b) => { return Math.random() })
       async function f() {
