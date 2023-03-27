@@ -10,14 +10,21 @@ client = discord.Client(intents=discord.Intents.default())
 
 cmd=app_commands.CommandTree(client)
 
-@cmd.command(name = "register", description = "REGISTER FOR 100 POINTS",guild=discord.Object(id=984131715721224203))
-async def first_command(interaction):
-    points[interaction.author]=points.get(interaction.author) or 100
-    await interaction.response.send_message(f'You Have {points.get(interaction.author)} points')
+@cmd.command(name = "register", description = "REGISTER FOR 100 POINTS")
+async def first_command(interaction:discord.Interaction):
+    user="b"+ str(interaction.user.id)
+    points[user]=points.get(user) or 100
+    await interaction.response.send_message(f'You Have {points.get(user)} points')
+    print(points[user])
+
+
+
 
 @client.event
+async def on_ready():
+    await cmd.sync()
 async def on_message(message):
-    print(message.guild.id)
+    print(message.author.id)
 
 client.run('MTA4OTUwNTE0NDY5NTE2MDgzMg.GZzkiP.RAtqsHtChmDzxUei31rGmLTfxs1eEuwk2MqfOk')
 
