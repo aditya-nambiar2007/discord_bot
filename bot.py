@@ -53,8 +53,8 @@ units = {
     },
     'angle':{
         'deg':1,
-        'rad': pi/180,
-        'grad':11/9
+        'rad': 180/pi,
+        'grad':0.9
     }
 }
 
