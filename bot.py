@@ -3,6 +3,14 @@ from discord import app_commands
 import random
 import json
 from calci.calci import maths,pi
+import time
+
+
+def random_question():
+    operators=["*","+","/","-"]
+    nums=[random.randint(1,100),random.randint(1,100)].sort()
+    ques=f"{nums[1]} {random.choice(operators)} {nums[0]}"
+    return {"ques":ques,"ans":int(exec(ques))}
 
 units = {
     "distance": {
@@ -145,7 +153,7 @@ async def first_command(interaction: discord.Interaction):
 @app_commands.describe(quantity="Quantity to convert", unit="Units to convert", value="Value to convert")
 @app_commands.choices(quantity=choices)
 async def clear(interaction: discord.Interaction, quantity: app_commands.Choice[str], unit: str, value: float):
-    await interaction.response.send_message(convert(quantity, unit, value))
+    await interaction.response.send_message(f'```{convert(quantity, unit, value)}```')
 
 
 @cmd.command(name='units', description="View Units")
@@ -159,7 +167,11 @@ async def clear(interaction: discord.Interaction, quantity: app_commands.Choice[
 @cmd.command(name='math', description="Evaluate A Math Expression")
 @app_commands.describe(exp="Math Expression")
 async def clear(interaction: discord.Interaction, exp: str):
-    await interaction.response.send_message(maths(exp))
+    await interaction.response.send_message(f'```{maths(exp)}```')
+
+@cmd.command(name='math-help', description="View Available Math Functions And Operators")
+async def clear(interaction: discord.Interaction,):
+    await interaction.response.send_message(file=discord.File("calci/functions.png"))
 
 
 @client.event
@@ -169,7 +181,10 @@ async def on_ready():
 
 async def on_message(message):
     if message.content.startswith('$quiz'):
-        print('quiz')
+        for i in range(1,10):
+            question=random_question()
+            message.channel.send(f"Q{i} {question['ques']}")
+            time.sleep(6000)
+            message.channel.send(question['ans'])
 
-client.run(
-    'MTA4OTUwNTE0NDY5NTE2MDgzMg.GZzkiP.RAtqsHtChmDzxUei31rGmLTfxs1eEuwk2MqfOk')
+client.run('MTA4OTUwNTE0NDY5NTE2MDgzMg.GZzkiP.RAtqsHtChmDzxUei31rGmLTfxs1eEuwk2MqfOk')
