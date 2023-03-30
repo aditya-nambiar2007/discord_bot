@@ -177,8 +177,6 @@ async def clear(interaction: discord.Interaction,):
 @client.event
 async def on_ready():
     await cmd.sync()
-
-
 async def on_message(message):
     if message.content.startswith('$quiz'):
         for i in range(1,10):
