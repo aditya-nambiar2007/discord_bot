@@ -202,7 +202,11 @@ async def first_command(interaction: discord.Interaction,n:int):
                 time.sleep(6)
             await interaction.channel.send(f"ANSWER : { a }")
             await interaction.channel.send(".")
-        await interaction.channel.send( json.dumps(score[f"c{interaction.channel.id}"]  ).replace(',',',\n'))
+        s=""
+        for k in score[f"c{interaction.channel.id}"]:
+            sp=score[f"c{interaction.channel.id}"][k]
+            s+=f"{k} : {sp}\n"
+        await interaction.channel.send(discord.Embed(title="Scores", description=s,  color=0xFFFF00))
         del score[f"c{interaction.channel.id}"]
     elif not 1<n<15:
         await interaction.response.send_message(f"n must be betwen 1 and 15")
