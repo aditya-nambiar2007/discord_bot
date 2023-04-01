@@ -2,6 +2,7 @@ import math
 import re
 from decimal import Decimal,getcontext
 getcontext().prec=50
+
 #tokens
 
 tokens=("e","f","pi","ln","log","abs","sin","asin","sinh","asinh","cos","acos","cosh","acosh","tan","atan","tanh","atanh")

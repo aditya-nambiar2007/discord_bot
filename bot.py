@@ -197,16 +197,16 @@ async def first_command(interaction: discord.Interaction,n:int):
             global ans
             ans=a
             if "*" in q or "/" in q:
-                time.sleep(11)
+                 time.sleep(11)
             else:
-                time.sleep(6)
-            await interaction.channel.send(f"ANSWER : { a }")
-            await interaction.channel.send(".")
+                 time.sleep(6)
+            await interaction.channel.send(f"ANSWER : { a }\n...")
+            correct_messages[f'c{interaction.channel.id}']=[]
         s=""
         for k in score[f"c{interaction.channel.id}"]:
             sp=score[f"c{interaction.channel.id}"][k]
             s+=f"{k} : {sp}\n"
-        await interaction.channel.send(discord.Embed(title="Scores", description=s,  color=0xFFFF00))
+        await interaction.channel.send(embed=discord.Embed(title="Scores", description=s,  color=0xFFFF00))
         del score[f"c{interaction.channel.id}"]
     elif not 1<n<15:
         await interaction.response.send_message(f"n must be betwen 1 and 15")
@@ -224,6 +224,7 @@ async def f():
 f()
 
 score={}
+correct_messages={}
 
 @client.event
 async def on_ready():
@@ -231,16 +232,21 @@ async def on_ready():
     
 @client.event
 async def on_message(message):  
-    user = f"<@{message.author.id}>"
     channel = f"c{message.channel.id}"
     if message.author == client.user or message.author.bot :
         return
     if message.content.startswith("$") and round(float(message.content.replace("$","")),1)==round(ans,1):
-        if not score[channel].get(user):
-            score[channel][user]=1
-        else:
-            score[channel][user]+=1
-        await message.add_reaction("✅")
+        if correct_messages.get(channel) == None:correct_messages[channel]=[]
+
+        correct_messages[channel].append(message)
+        user = f"<@{correct_messages[channel][0].author.id}>"
+
+        if not score[channel].get(user):score[channel][user]=1
+        else:score[channel][user]+=1
+
+
+
+        await correct_messages[channel][0].add_reaction("✅")
 
 client.run('MTA4OTUwNTE0NDY5NTE2MDgzMg.GZzkiP.RAtqsHtChmDzxUei31rGmLTfxs1eEuwk2MqfOk')
 
