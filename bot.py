@@ -4,13 +4,21 @@ import random
 import json
 from calci.calci import maths,pi
 import time
-
+import http.server as http
+from decimal import Decimal as d
+from decimal import getcontext
+getcontext().prec=50
 
 def random_question():
     operators=["*","+","/","-"]
-    nums=[random.randint(1,100),random.randint(1,100)].sort()
-    ques=f"{nums[1]} {random.choice(operators)} {nums[0]}"
-    return {"ques":ques,"ans":int(exec(ques))}
+    nums=[random.randint(1,100),random.randint(1,100)]
+    nums.sort()
+    ans=0
+    o=random.choice(operators)
+    ques=f"{nums[1]} {o} {nums[0]}"
+    ans=round(eval(ques),2)
+    return {"ques":ques,"ans":ans}
+
 
 units = {
     "distance": {
@@ -119,7 +127,7 @@ unit_names = {
         'rad': 'radians',
         'grad':'gradians'
     }
-    
+ 
         }
 
 choices = []
@@ -135,18 +143,18 @@ def convert(q, u, v):
     unit = f'["{unit}"]'
     unit = json.loads(unit)
 
-    val = str(v*quantity[unit[0]]/quantity[unit[1]]).replace('e', "×10 ^")
+    val = str(d( v )*d( quantity[unit[0]] ) / d( quantity[unit[1]] )).replace('e', "×10 ^")
     return f'{v} {unit[0]} = {val} {unit[1]}'
 
 
-client = discord.Client(intents=discord.Intents.default())
+intents = discord.Intents.default()
+intents.messages=True
+intents.message_content = True 
+intents.members=True
+client = discord.Client(intents=intents)
 
 cmd = app_commands.CommandTree(client)
 
-
-@cmd.command(name="quiz", description="START A QUIZ WITH 10 QUESTIONS")
-async def first_command(interaction: discord.Interaction):
-    await interaction.response.send_message(f'Type $quiz to start a quiz of 10 questions')
 
 
 @cmd.command(name='convert', description="Convert Units")
@@ -161,7 +169,7 @@ async def clear(interaction: discord.Interaction, quantity: app_commands.Choice[
 @app_commands.choices(quantity=choices)
 async def clear(interaction: discord.Interaction, quantity: app_commands.Choice[str]):
     await interaction.response.send_message(
-        quantity.name+":\n"+json.dumps(unit_names[quantity.value]).replace(",", "\n").replace("{", "").replace("}", "").replace("\"", "").replace(":", " => "))
+        quantity.name+":\n"+json.dumps(unit_names[quantity.value]).replace(",", "\n").replace("{", "").replace("}", "").replace("\"", "").replace(":", " → "))
 
 
 @cmd.command(name='math', description="Evaluate A Math Expression")
@@ -174,15 +182,61 @@ async def clear(interaction: discord.Interaction,):
     await interaction.response.send_message(file=discord.File("calci/functions.png"))
 
 
+
+@cmd.command(name="quiz", description="START A QUIZ ")
+@app_commands.describe(n="Number Of Questions Between 1 and 15")
+async def first_command(interaction: discord.Interaction,n:int):
+    if score.get(f"c{interaction.channel.id}")==None and 1<n<15:
+        await interaction.response.send_message(f"WAIT FOR {n} QUESTIONS !")
+        score[f"c{interaction.channel.id}"]={}
+        for i in range(1,n+1):
+            ques=random_question()
+            q=ques.get("ques")
+            a=ques.get('ans')
+            await interaction.channel.send(f"QUESTION {i}:  { q }")
+            global ans
+            ans=a
+            if "*" in q or "/" in q:
+                time.sleep(11)
+            else:
+                time.sleep(6)
+            await interaction.channel.send(f"ANSWER : { a }")
+            await interaction.channel.send(".")
+        await interaction.channel.send( json.dumps(score[f"c{interaction.channel.id}"]  ).replace(',',',\n'))
+        del score[f"c{interaction.channel.id}"]
+    elif not 1<n<15:
+        await interaction.response.send_message(f"n must be betwen 1 and 15")
+    else:
+        await interaction.response.send_message(f"Quiz Is Active")
+
+async def f():
+    class SimpleHTTPRequestHandler(http.BaseHTTPRequestHandler):
+         def do_GET(self):
+            self.send_response(200)
+            self.end_headers()
+            self.wfile.write(b'Bot\'s Online!')
+    await http.HTTPServer(("localhost",80),SimpleHTTPRequestHandler).serve_forever()
+
+f()
+
+score={}
+
 @client.event
 async def on_ready():
     await cmd.sync()
-async def on_message(message):
-    if message.content.startswith('$quiz'):
-        for i in range(1,10):
-            question=random_question()
-            message.channel.send(f"Q{i} {question['ques']}")
-            time.sleep(6000)
-            message.channel.send(question['ans'])
+    
+@client.event
+async def on_message(message):  
+    user = f"<@{message.author.id}>"
+    channel = f"c{message.channel.id}"
+    if message.author == client.user or message.author.bot :
+        return
+    if message.content.startswith("$") and round(float(message.content.replace("$","")),1)==round(ans,1):
+        if not score[channel].get(user):
+            score[channel][user]=1
+        else:
+            score[channel][user]+=1
+        await message.add_reaction("✅")
 
 client.run('MTA4OTUwNTE0NDY5NTE2MDgzMg.GZzkiP.RAtqsHtChmDzxUei31rGmLTfxs1eEuwk2MqfOk')
+

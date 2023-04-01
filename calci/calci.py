@@ -1,6 +1,7 @@
 import math
 import re
-
+from decimal import Decimal,getcontext
+getcontext().prec=50
 #tokens
 
 tokens=("e","f","pi","ln","log","abs","sin","asin","sinh","asinh","cos","acos","cosh","acosh","tan","atan","tanh","atanh")
@@ -35,13 +36,14 @@ def maths(n):
     correct=True
     for x in re.findall("[a-z]+",n):
         if x not in tokens:    correct=False
-
     if not correct :
         return "Invalid Input"
     else:
         try :
-            return f"ANSWER : {eval(n)}".replace("e", "×10 ^")
-        except :
+            ans=Decimal(eval(n.replace("^","**").replace("×","*").replace("÷","/") ))
+            return f"ANSWER : {ans}".replace("e", "×10 ^")
+        except e :
+            print(e)
             return "ERROR !"
 
 
