@@ -1,12 +1,11 @@
 import discord
 from discord import app_commands
-import asyncio
 import random
 import json
+import threading
 from calci.calci import maths,pi
 import time
 import http.server as http
-from decimal import Decimal as d
 from decimal import getcontext
 getcontext().prec=50
 
@@ -72,7 +71,8 @@ units = {
         'deg':1,
         'rad': 180/pi,
         'grad':0.9
-    }
+    },
+    'temperature':{}
 }
 
 
@@ -127,7 +127,11 @@ unit_names = {
         'deg':'degree',
         'rad': 'radians',
         'grad':'gradians'
-    }
+    },
+    'temperature':{
+        'K':'Kelvin',
+        'C':'Celsius',
+        'F':'Fahrenhiet'}
  
         }
 
@@ -143,8 +147,27 @@ def convert(q, u, v):
     unit = unit.replace("-", '","')
     unit = f'["{unit}"]'
     unit = json.loads(unit)
-
-    val = str(d( v )*d( quantity[unit[0]] ) / d( quantity[unit[1]] )).replace('e', "×10 ^")
+    val=0
+    if q.value=='temperature':
+        if unit==['K','C']:
+            val= v-273.15
+        elif unit==['K','F']:
+            val= (v - 273.15) * 9/5 + 32
+        elif unit==['C','F']:
+            val=v*9/5+32
+        elif unit==['C','K']:
+            val=v+273.15
+        elif unit==['F','K']:
+            val= (v - 32) * 5/9 + 273.15 
+        elif unit==['F',"C"]:
+            val= (v - 32) * 5/9 
+        elif unit[0]==unit[1]:
+            val=v
+        else :
+            val='null \{error\} '
+    else:
+        val = str(( v )*( quantity[unit[0]] ) / ( quantity[unit[1]] )).replace('e', "×10 ^").replace("C","°C").replace("F","°F")
+    
     return f'{v} {unit[0]} = {val} {unit[1]}'
 
 
@@ -215,13 +238,13 @@ async def first_command(interaction: discord.Interaction,n:int):
     else:
         await interaction.response.send_message(f"Quiz Is Active")
 
-async def f():
+def f():
     class SimpleHTTPRequestHandler(http.BaseHTTPRequestHandler):
          def do_GET(self):
             self.send_response(200)
             self.end_headers()
             self.wfile.write(b'Bot\'s Online!')
-    await http.HTTPServer(("localhost",80),SimpleHTTPRequestHandler).serve_forever()
+    http.HTTPServer(("localhost",80),SimpleHTTPRequestHandler).serve_forever()
 
 
 score={}
@@ -234,7 +257,6 @@ async def on_ready():
 @client.event
 async def on_message(message):  
     channel = f"c{message.channel.id}"
-    print(correct_messages)
     if message.author == client.user or message.author.bot :
         return
     
@@ -256,4 +278,7 @@ async def on_message(message):
         else:
             score[channel][user]+=1
 
+t=threading.Thread(target=f,name='server')
+t.start()
 client.run('MTA4OTUwNTE0NDY5NTE2MDgzMg.GZzkiP.RAtqsHtChmDzxUei31rGmLTfxs1eEuwk2MqfOk')
+t.join()
