@@ -41,7 +41,7 @@ def maths(n):
         return "Invalid Input"
     else:
         try :
-            ans=Decimal(eval(n.replace("^","**").replace("×","*").replace("÷","/") ))
+            ans=Decimal(eval(n.replace("^","**").replace("×","*").replace("÷","/").replace("%","*0.01") ))
             return f"ANSWER : {ans}".replace("e", "×10 ^")
         except e :
             print(e)
