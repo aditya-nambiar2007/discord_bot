@@ -1,5 +1,6 @@
 import discord
 from discord import app_commands
+import asyncio
 import random
 import json
 from calci.calci import maths,pi
@@ -197,11 +198,11 @@ async def first_command(interaction: discord.Interaction,n:int):
             global ans
             ans=a
             if "*" in q or "/" in q:
-                 time.sleep(11)
+                 time.sleep(20)
             else:
-                 time.sleep(6)
+                 time.sleep(10)
             await interaction.channel.send(f"ANSWER : { a }\n...")
-            correct_messages[f'c{interaction.channel.id}']=[]
+            correct_messages[f'c{interaction.channel.id}']=0
         s=""
         for k in score[f"c{interaction.channel.id}"]:
             sp=score[f"c{interaction.channel.id}"][k]
@@ -221,7 +222,6 @@ async def f():
             self.wfile.write(b'Bot\'s Online!')
     await http.HTTPServer(("localhost",80),SimpleHTTPRequestHandler).serve_forever()
 
-f()
 
 score={}
 correct_messages={}
@@ -235,18 +235,21 @@ async def on_message(message):
     channel = f"c{message.channel.id}"
     if message.author == client.user or message.author.bot :
         return
-    if message.content.startswith("$") and round(float(message.content.replace("$","")),1)==round(ans,1):
-        if correct_messages.get(channel) == None:correct_messages[channel]=[]
+    
+    def f(x):
+        try:
+            return float(x)
+        except:
+            return None
 
-        correct_messages[channel].append(message)
-        user = f"<@{correct_messages[channel][0].author.id}>"
+    if round(f(message.content),1)==round(ans,1):
 
+        correct_messages[channel]=correct_messages[channel] or message
+        user = f"<@{correct_messages[channel].author.id}>"
+
+        await correct_messages[channel][0].add_reaction("✅")
         if not score[channel].get(user):score[channel][user]=1
         else:score[channel][user]+=1
 
-
-
-        await correct_messages[channel][0].add_reaction("✅")
-
+asyncio.run(f())
 client.run('MTA4OTUwNTE0NDY5NTE2MDgzMg.GZzkiP.RAtqsHtChmDzxUei31rGmLTfxs1eEuwk2MqfOk')
-
