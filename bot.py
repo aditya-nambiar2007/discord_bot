@@ -198,7 +198,7 @@ async def first_command(interaction: discord.Interaction,n:int):
             global ans
             ans=a
             if "*" in q or "/" in q:
-                 time.sleep(20)
+                 time.sleep(15)
             else:
                  time.sleep(10)
             await interaction.channel.send(f"ANSWER : { a }\n...")
@@ -208,6 +208,7 @@ async def first_command(interaction: discord.Interaction,n:int):
             sp=score[f"c{interaction.channel.id}"][k]
             s+=f"{k} : {sp}\n"
         await interaction.channel.send(embed=discord.Embed(title="Scores", description=s,  color=0xFFFF00))
+        time.sleep(0.01)
         del score[f"c{interaction.channel.id}"]
     elif not 1<n<15:
         await interaction.response.send_message(f"n must be betwen 1 and 15")
@@ -233,23 +234,26 @@ async def on_ready():
 @client.event
 async def on_message(message):  
     channel = f"c{message.channel.id}"
+    print(correct_messages)
     if message.author == client.user or message.author.bot :
         return
     
     def f(x):
         try:
-            return float(x)
+            return round(float(x),1)
         except:
             return None
 
-    if round(f(message.content),1)==round(ans,1):
+    if f(message.content)==round(ans,1):
 
-        correct_messages[channel]=correct_messages[channel] or message
+        correct_messages[channel]=correct_messages.get(channel) or message
         user = f"<@{correct_messages[channel].author.id}>"
 
-        await correct_messages[channel][0].add_reaction("✅")
-        if not score[channel].get(user):score[channel][user]=1
-        else:score[channel][user]+=1
+        await correct_messages[channel].add_reaction("✅")
 
-asyncio.run(f())
+        if not score[channel].get(user):
+            score[channel][user]=1
+        else:
+            score[channel][user]+=1
+
 client.run('MTA4OTUwNTE0NDY5NTE2MDgzMg.GZzkiP.RAtqsHtChmDzxUei31rGmLTfxs1eEuwk2MqfOk')
