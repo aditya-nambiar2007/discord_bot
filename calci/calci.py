@@ -5,7 +5,7 @@ getcontext().prec=50
 
 #tokens
 
-tokens=("e","f","pi","ln","log","abs","sin","asin","sinh","asinh","cos","acos","cosh","acosh","tan","atan","tanh","atanh")
+tokens=("e","f","pi","ln","log","abs","sin","asin","sinh","asinh","cos","acos","cosh","acosh","tan","atan","tanh","atanh","sqrt","cbrt")
 
 #constants
 
@@ -32,6 +32,9 @@ atan  =   lambda n : math.atan(n)
 tanh  =   lambda n : math.tanh(n)
 atanh =  lambda n : math.atanh(n)
 f     =lambda n:math.factorial(n)
+sqrt  =lambda n:math.sqrt(n)
+cbrt  =lambda n:math.cbrt(n)
+
 
 def maths(n):
     correct=True

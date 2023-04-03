@@ -224,12 +224,13 @@ async def first_command(interaction: discord.Interaction,n:int):
                  time.sleep(15)
             else:
                  time.sleep(10)
-            await interaction.channel.send(f"ANSWER : { a }\n...")
             correct_messages[f'c{interaction.channel.id}']=0
+            await interaction.channel.send(f"ANSWER : { a }\n...")
         s=""
         for k in score[f"c{interaction.channel.id}"]:
             sp=score[f"c{interaction.channel.id}"][k]
-            s+=f"{k} : {sp}\n"
+            if sp != 0:
+                s+=f"{k} : {sp}\n"
         await interaction.channel.send(embed=discord.Embed(title="Scores", description=s,  color=0xFFFF00))
         time.sleep(0.01)
         del score[f"c{interaction.channel.id}"]
@@ -257,26 +258,23 @@ async def on_ready():
 @client.event
 async def on_message(message):  
     channel = f"c{message.channel.id}"
+    if not score.get(channel):score[channel]={}
+    score[channel][f"<@{message.author.id}>"]=score[channel].get(f"<@{message.author.id}>") or 0
     if message.author == client.user or message.author.bot :
         return
-    
     def f(x):
         try:
             return round(float(x),1)
         except:
             return None
 
-    if f(message.content)==round(ans,1):
-
+    if f(message.content)==round(ans,1) and not message.author.bot:
+        print(message.content)
         correct_messages[channel]=correct_messages.get(channel) or message
         user = f"<@{correct_messages[channel].author.id}>"
-
         await correct_messages[channel].add_reaction("✅")
-
-        if not score[channel].get(user):
-            score[channel][user]=1
-        else:
-            score[channel][user]+=1
+        score[channel][user]=score[channel][user]+1 or 1
+            
 
 t=threading.Thread(target=f,name='server')
 t.start()
