@@ -167,8 +167,10 @@ def convert(q, u, v):
             val='null \{error\} '
     else:
         val = str(( v )*( quantity[unit[0]] ) / ( quantity[unit[1]] )).replace('e', "×10 ^").replace("C","°C").replace("F","°F")
-    
-    return f'{v} {unit[0]} = {val} {unit[1]}'
+    if val=='null':
+        return 'null'
+    else:
+        return f'{v} {unit[0]} = {val} {unit[1]}'
 
 
 intents = discord.Intents.default()
@@ -234,10 +236,10 @@ async def first_command(interaction: discord.Interaction,n:int):
         await interaction.channel.send(embed=discord.Embed(title="Scores", description=s,  color=0xFFFF00))
         time.sleep(0.01)
         del score[f"c{interaction.channel.id}"]
-    elif not 1<n<15:
-        await interaction.response.send_message(f"n must be betwen 1 and 15")
+    elif  score.get(f"c{interaction.channel.id}")!=None:
+        await interaction.response.send_message("Quiz Is Active")
     else:
-        await interaction.response.send_message(f"Quiz Is Active")
+        await interaction.response.send_message("n must be betwen 1 and 15")
 
 def f():
     class SimpleHTTPRequestHandler(http.BaseHTTPRequestHandler):
@@ -249,7 +251,7 @@ def f():
             self.send_response(200)
             self.end_headers()
             self.wfile.write(b'Bot\'s Online!')
-    http.HTTPServer(("localhost",80),SimpleHTTPRequestHandler).serve_forever()
+    http.HTTPServer(("0.0.0.0",80),SimpleHTTPRequestHandler).serve_forever()
 
 
 score={}
@@ -271,13 +273,12 @@ async def on_message(message):
             return round(float(x),1)
         except:
             return None
-
     if f(message.content)==round(ans,1) and not message.author.bot:
         print(message.content)
         correct_messages[channel]=correct_messages.get(channel) or message
         user = f"<@{correct_messages[channel].author.id}>"
-        await correct_messages[channel].add_reaction("✅")
         score[channel][user]=score[channel][user]+1 or 1
+        await correct_messages[channel].add_reaction("✅")
             
 
 t=threading.Thread(target=f,name='server')
