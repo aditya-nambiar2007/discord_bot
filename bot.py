@@ -138,10 +138,11 @@ unit_names = {
 }
 
 choices = []
-
+nums    = []
 for k in units:
   choices.append(app_commands.Choice(name=k.capitalize(), value=k))
-
+for k in range(1,16):
+  nums.append(app_commands.Choice(name=str(k), value=k))
 
 def convert(q, u, v):
   quantity = units[q.value]
@@ -166,7 +167,7 @@ def convert(q, u, v):
     elif unit[0] == unit[1]:
       val = v
     else:
-      val = 'null \{error\} '
+      val = 'null'
   else:
     val = str((v) * (quantity[unit[0]]) / (quantity[unit[1]])).replace(
       'e', "×10 ^").replace("C", "°C").replace("F", "°F")
@@ -222,8 +223,13 @@ async def clear(interaction: discord.Interaction, ):
 
 @cmd.command(name="quiz", description="START A QUIZ ")
 @app_commands.describe(n="Number Of Questions Between 1 and 15")
-async def first_command(interaction: discord.Interaction, n: int):
+@app_commands.choices(n=nums)
+async def first_command(interaction: discord.Interaction, n: app_commands.Choice[int]):
+  n=n.value
+  global ans
+  ans=None
   if score.get(f"c{interaction.channel.id}") == None and 1 < n < 15:
+    await interaction.response.defer()
     await interaction.response.send_message(f"WAIT FOR {n} QUESTIONS !")
     score[f"c{interaction.channel.id}"] = {}
     for i in range(1, n + 1):
@@ -231,7 +237,6 @@ async def first_command(interaction: discord.Interaction, n: int):
       q = ques.get("ques")
       a = ques.get('ans')
       await interaction.channel.send(f"QUESTION {i}:  { q }")
-      global ans
       ans = a
       if "*" in q or "/" in q:
         time.sleep(15)
@@ -249,10 +254,8 @@ async def first_command(interaction: discord.Interaction, n: int):
     time.sleep(0.01)
     del score[f"c{interaction.channel.id}"]
   elif score.get(f"c{interaction.channel.id}") != None:
+    print(score.get(f"c{interaction.channel.id}"))
     await interaction.response.send_message("Quiz Is Active")
-  else:
-    await interaction.response.send_message("n must be betwen 1 and 15")
-
 
 def f():
 
@@ -282,20 +285,15 @@ async def on_ready():
 
 @client.event
 async def on_message(message):
-  channel = f"c{message.channel.id}"
-  if not score.get(channel): score[channel] = {}
-  score[channel][f"<@{message.author.id}>"] = score[channel].get(
-    f"<@{message.author.id}>") or 0
-  if message.author == client.user or message.author.bot:
-    return
-
   def f(x):
     try:
-      return round(float(x), 1)
+        return round(float(x), 1)
     except:
-      return None
-
+        return None
   if f(message.content) == round(ans, 1) and not message.author.bot:
+    channel = f"c{message.channel.id}"
+    if not score.get(channel): score[channel] = {}
+    score[channel][f"<@{message.author.id}>"] = score[channel].get(f"<@{message.author.id}>") or 0
     print(message.content)
     correct_messages[channel] = correct_messages.get(channel) or message
     user = f"<@{correct_messages[channel].author.id}>"
