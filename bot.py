@@ -255,7 +255,8 @@ async def first_command(interaction: discord.Interaction, n: int):
 
 
 def f():
- class SimpleHTTPRequestHandler(http.BaseHTTPRequestHandler):
+
+  class SimpleHTTPRequestHandler(http.BaseHTTPRequestHandler):
 
     def do_GET(self):
       self.send_response(200)
