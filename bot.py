@@ -185,6 +185,9 @@ client = discord.Client(intents=intents)
 
 cmd = app_commands.CommandTree(client)
 
+@cmd.command(name="help",description="HELP WITH COMMANDS")
+async def help(interaction: discord.Interaction):
+  await interaction.response.send_message("UFF!")
 
 @cmd.command(name='convert', description="Convert Units")
 @app_commands.describe(quantity="Quantity to convert",
@@ -214,8 +217,7 @@ async def clear(interaction: discord.Interaction, exp: str):
   await interaction.response.send_message(f'```{maths(exp)}```')
 
 
-@cmd.command(name='math-help',
-             description="View Available Math Functions And Operators")
+@cmd.command(name='math-help', description="View Available Math Functions And Operators")
 async def clear(interaction: discord.Interaction, ):
   await interaction.response.send_message(
     file=discord.File("calci/functions.png"))
@@ -229,7 +231,6 @@ async def first_command(interaction: discord.Interaction, n: app_commands.Choice
   global ans
   ans=None
   if score.get(f"c{interaction.channel.id}") == None and 1 < n < 15:
-    await interaction.response.defer()
     await interaction.response.send_message(f"WAIT FOR {n} QUESTIONS !")
     score[f"c{interaction.channel.id}"] = {}
     for i in range(1, n + 1):
@@ -253,8 +254,7 @@ async def first_command(interaction: discord.Interaction, n: app_commands.Choice
       embed=discord.Embed(title="Scores", description=s, color=0xFFFF00))
     time.sleep(0.01)
     del score[f"c{interaction.channel.id}"]
-  elif score.get(f"c{interaction.channel.id}") != None:
-    print(score.get(f"c{interaction.channel.id}"))
+  else :
     await interaction.response.send_message("Quiz Is Active")
 
 def f():
@@ -294,7 +294,6 @@ async def on_message(message):
     channel = f"c{message.channel.id}"
     if not score.get(channel): score[channel] = {}
     score[channel][f"<@{message.author.id}>"] = score[channel].get(f"<@{message.author.id}>") or 0
-    print(message.content)
     correct_messages[channel] = correct_messages.get(channel) or message
     user = f"<@{correct_messages[channel].author.id}>"
     score[channel][user] = score[channel][user] + 1 or 1
