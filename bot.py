@@ -302,6 +302,4 @@ async def on_message(message):
 
 t = threading.Thread(target=f, name='server')
 t.start()
-#client.run(os.environ['token'])
-client.run('MTA4OTUwNTE0NDY5NTE2MDgzMg.GZzkiP.RAtqsHtChmDzxUei31rGmLTfxs1eEuwk2MqfOk')
-t.join()
+client.run(os.environ['token'])
